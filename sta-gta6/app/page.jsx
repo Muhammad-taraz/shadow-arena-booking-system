@@ -202,12 +202,20 @@ export default function Page() {
               <span>Pay at the arena</span>
               <b>{pkr(done.total - done.paid_now)}</b>
             </div>
-            <p className="note">
-              <b>How to check your booking:</b> open the booking status page and
-              enter this reference with the mobile number you booked with. It
-              shows Pending, Confirmed or Not verified. We will also message you
-              on WhatsApp.
-            </p>
+            {f.method === "Bank transfer" ? (
+              <p className="note">
+                Send <b>{pkr(payNow)}</b> to{" "}
+                <b>{process.env.NEXT_PUBLIC_BANK_NAME}</b>, account title{" "}
+                <b>{process.env.NEXT_PUBLIC_BANK_TITLE}</b>, IBAN{" "}
+                <b>{process.env.NEXT_PUBLIC_BANK_IBAN}</b>.
+              </p>
+            ) : (
+              <p className="note">
+                Send <b>{pkr(payNow)}</b> to{" "}
+                <b>{process.env.NEXT_PUBLIC_PAY_NUMBER}</b> (
+                {process.env.NEXT_PUBLIC_PAY_TITLE}) on {f.method}.
+              </p>
+            )}{" "}
             <div className="booking-actions">
               <a className="btn" href={`/track?ref=${done.ref}`}>
                 Check booking status
@@ -498,7 +506,7 @@ export default function Page() {
                 </div>
                 <label>Sent with</label>
                 <div className="row">
-                  {["JazzCash", "EasyPaisa", "Bank transfer"].map((m) => (
+                  {["JazzCash", "Bank transfer"].map((m) => (
                     <button
                       type="button"
                       key={m}
