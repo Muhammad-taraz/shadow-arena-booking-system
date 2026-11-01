@@ -136,8 +136,6 @@ shadow-arena-booking-system/
     └── package.json
 ```
 
-*Folder structure may vary depending on the actual implementation.*
-
 ---
 
 ## ⚙️ Getting Started
