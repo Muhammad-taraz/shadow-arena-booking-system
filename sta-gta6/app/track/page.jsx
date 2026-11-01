@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import BookingDownloads from "../../components/booking-downloads.jsx";
 import { range } from "../../lib/booking.js";
 const LABEL = {
   pending:
@@ -17,6 +18,7 @@ export default function Track() {
     const q = new URLSearchParams(window.location.search).get("ref");
     if (q) setRef(q);
   }, []);
+
   async function go(e) {
     e.preventDefault();
     setErr("");
@@ -61,35 +63,48 @@ export default function Track() {
         <button className="btn">Check status</button>
       </form>
       {b && (
-        <div className="ticket">
-          <div className="in" style={{ paddingTop: 20 }}>
-            <span className={"tag " + b.status}>
-              {b.status === "pending"
-                ? "Under review"
-                : b.status === "approved"
-                  ? "Confirmed"
-                  : "Not verified"}
-            </span>
-            <h3 style={{ marginTop: 8 }}>{b.ref}</h3>
-            <p className="sub">{LABEL[b.status]}</p>
-            <div className="line">
-              <span>Date</span>
-              <b>{b.date}</b>
-            </div>
-            <div className="line">
-              <span>Session</span>
-              <b>{range(b.start_hour, b.duration)}</b>
-            </div>
-            <div className="line">
-              <span>Console</span>
-              <b>
-                {b.consoles.length === 2
-                  ? "Both PS5s"
-                  : `PS5 ${b.consoles[0] === 1 ? "One" : "Two"}`}
-              </b>
+        <>
+          <div className="ticket">
+            <div className="in" style={{ paddingTop: 20 }}>
+              <span className={"tag " + b.status}>
+                {b.status === "pending"
+                  ? "Under review"
+                  : b.status === "approved"
+                    ? "Confirmed"
+                    : "Not verified"}
+              </span>
+              <h3 style={{ marginTop: 8 }}>{b.ref}</h3>
+              <p className="sub">{LABEL[b.status]}</p>
+              <div className="line">
+                <span>Date</span>
+                <b>{b.date}</b>
+              </div>
+              <div className="line">
+                <span>Session</span>
+                <b>{range(b.start_hour, b.duration)}</b>
+              </div>
+              <div className="line">
+                <span>Console</span>
+                <b>
+                  {b.consoles.length === 2
+                    ? "Both PS5s"
+                    : `PS5 ${b.consoles[0] === 1 ? "One" : "Two"}`}
+                </b>
+              </div>
+              <BookingDownloads
+                booking={{
+                  ref: b.ref,
+                  status: b.status,
+                  date: b.date,
+                  startHour: b.start_hour,
+                  duration: b.duration,
+                  consoles: b.consoles,
+                  name: b.name,
+                }}
+              />
             </div>
           </div>
-        </div>
+        </>
       )}
       <p className="note">
         <a href="/">Back to booking</a>

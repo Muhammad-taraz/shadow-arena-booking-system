@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import BookingDownloads from "../components/booking-downloads.jsx";
 import {
   ZONE,
   CONSOLES,
@@ -36,7 +37,7 @@ export default function Page() {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState("");
   const [mode, setMode] = useState("1");
-  const [duration, setDuration] = useState(2);
+  const [duration, setDuration] = useState(1);
   const [start, setStart] = useState(null);
   const [locks, setLocks] = useState([]);
   const [plan, setPlan] = useState("half");
@@ -216,6 +217,17 @@ export default function Page() {
                 {process.env.NEXT_PUBLIC_PAY_TITLE}) on {f.method}.
               </p>
             )}{" "}
+            <BookingDownloads
+              booking={{
+                ref: done.ref,
+                status: "pending",
+                date: done.date,
+                startHour: done.start,
+                duration: done.duration,
+                consoles: done.consoles,
+                name: done.name,
+              }}
+            />
             <div className="booking-actions">
               <a className="btn" href={`/track?ref=${done.ref}`}>
                 Check booking status
@@ -264,6 +276,10 @@ export default function Page() {
               <span>1 hour</span>
             </div>
             <div className="rate">
+              <b>{pkr(price(2, 1))}</b>
+              <span>2 hour</span>
+            </div>
+            <div className="rate">
               <b>{pkr(price(3, 1))}</b>
               <span>3 hours</span>
             </div>
@@ -304,7 +320,7 @@ export default function Page() {
                     ? `Bookings open on launch day, ${dLabel(first, { weekday: "long", day: "numeric", month: "long" })}.`
                     : `Pick any day up to ${ADVANCE_DAYS} days ahead.`}
                 </p>
-                <div className="row">
+                <div className="row date-options">
                   {quick.map((d) => (
                     <button
                       type="button"
@@ -364,7 +380,7 @@ export default function Page() {
                   From {BULK_FROM} hours every hour costs {pkr(BULK_RATE)} per
                   console.
                 </p>
-                <div className="row" style={{ alignItems: "center" }}>
+                <div className="duration-controls">
                   <div className="stepper">
                     <button
                       type="button"
@@ -388,16 +404,18 @@ export default function Page() {
                       +
                     </button>
                   </div>
-                  {[1, 2, 3, 4, 6].map((h) => (
-                    <button
-                      type="button"
-                      key={h}
-                      className={"opt" + (duration === h ? " on" : "")}
-                      onClick={() => setDuration(h)}
-                    >
-                      {h}h
-                    </button>
-                  ))}
+                  <div className="duration-presets">
+                    {[1, 2, 3, 4, 6].map((h) => (
+                      <button
+                        type="button"
+                        key={h}
+                        className={"opt" + (duration === h ? " on" : "")}
+                        onClick={() => setDuration(h)}
+                      >
+                        {h}h
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="panel">
@@ -405,7 +423,7 @@ export default function Page() {
                 <p className="sub">
                   Only times where your whole session is free can be selected.
                 </p>
-                <div className="grid">
+                <div className="grid time-options">
                   {opts.map((o) => (
                     <button
                       type="button"
@@ -517,11 +535,20 @@ export default function Page() {
                     </button>
                   ))}
                 </div>
-                <p className="note">
-                  Send <b>{pkr(payNow)}</b> to{" "}
-                  <b>{process.env.NEXT_PUBLIC_PAY_NUMBER}</b> (
-                  {process.env.NEXT_PUBLIC_PAY_TITLE}).
-                </p>
+                {f.method === "Bank transfer" ? (
+                  <p className="note">
+                    Send <b>{pkr(payNow)}</b> to{" "}
+                    <b>{process.env.NEXT_PUBLIC_BANK_NAME}</b>, account title{" "}
+                    <b>{process.env.NEXT_PUBLIC_BANK_TITLE}</b>, IBAN{" "}
+                    <b>{process.env.NEXT_PUBLIC_BANK_IBAN}</b>.
+                  </p>
+                ) : (
+                  <p className="note">
+                    Send <b>{pkr(payNow)}</b> to{" "}
+                    <b>{process.env.NEXT_PUBLIC_PAY_NUMBER}</b> (
+                    {process.env.NEXT_PUBLIC_PAY_TITLE}) on {f.method}.
+                  </p>
+                )}
                 <label htmlFor="s">Name on the paying account</label>
                 <input
                   id="s"
@@ -568,41 +595,45 @@ export default function Page() {
           )}
         </form>
         <aside className="aside">
-          <div className="ticket">
+          <div className="ticket reservation-ticket">
             <div className="pic" />
             <div className="in">
               <h3>Your reservation</h3>
-              <div className="line">
-                <span>Date</span>
-                <b>
-                  {date
-                    ? dLabel(date, {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short",
-                      })
-                    : "-"}
-                </b>
-              </div>
-              <div className="line">
-                <span>Console</span>
-                <b>{MODES.find((m) => m.id === mode).label}</b>
-              </div>
-              <div className="line">
-                <span>Time</span>
-                <b>{startOk ? range(start, duration) : "Pick a start time"}</b>
-              </div>
-              <div className="line">
-                <span>Total</span>
-                <b>{pkr(total)}</b>
-              </div>
-              <div className="line">
-                <span>Pay now</span>
-                <b>{pkr(payNow)}</b>
-              </div>
-              <div className="line">
-                <span>Pay at the arena</span>
-                <b>{pkr(total - payNow)}</b>
+              <div className="reservation-grid">
+                <div className="line reservation-item">
+                  <span>Date</span>
+                  <b>
+                    {date
+                      ? dLabel(date, {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })
+                      : "-"}
+                  </b>
+                </div>
+                <div className="line reservation-item">
+                  <span>Console</span>
+                  <b>{MODES.find((m) => m.id === mode).label}</b>
+                </div>
+                <div className="line reservation-item">
+                  <span>Time</span>
+                  <b>
+                    {startOk ? range(start, duration) : "Pick a start time"}
+                  </b>
+                </div>
+                <div className="line reservation-item reservation-total">
+                  <span>Total</span>
+                  <b>{pkr(total)}</b>
+                </div>
+                <div className="line reservation-item">
+                  <span>Pay now</span>
+                  <b>{pkr(payNow)}</b>
+                </div>
+                <div className="line reservation-item">
+                  <span>Pay at the arena</span>
+                  <b>{pkr(total - payNow)}</b>
+                </div>
               </div>
               <p className="note">
                 Availability updates automatically. Rejected payments release
