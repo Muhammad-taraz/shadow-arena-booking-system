@@ -98,21 +98,42 @@ This provides database-level protection against conflicting reservations, even w
 
 ## 📂 Project Structure
 
-```text
+```
 shadow-arena-booking-system/
 │
-├── app/                    # Next.js App Router
-├── components/             # Reusable UI components
-├── lib/                    # Configuration and utilities
-├── public/
-│   └── images/             # Gaming images and assets
+├── .gitignore
+├── README.md
 │
-├── supabase/
-│   └── schema.sql          # Database schema
-│
-├── .env.example            # Environment variables template
-├── package.json
-└── README.md
+└── sta-gta6/                        # GTA VI booking application (Next.js)
+    │
+    ├── app/                         # Next.js App Router
+    │   ├── api/                     # Server-side API routes
+    │   │   ├── admin/route.js       # Admin: list bookings, approve/reject
+    │   │   ├── book/route.js        # Create booking, upload screenshot, lock slots
+    │   │   ├── slots/route.js       # Live availability per date
+    │   │   └── track/route.js       # Customer booking-status lookup
+    │   ├── admin/page.jsx           # Owner dashboard
+    │   ├── track/page.jsx           # Customer booking-status page
+    │   ├── globals.css              # Global styles
+    │   ├── layout.jsx               # Root layout and fonts
+    │   └── page.jsx                 # Public booking page
+    │
+    ├── lib/                         # Business logic and configuration
+    │   ├── booking.js               # Pricing, availability, validation, arena clock
+    │   ├── config.js                # Hours, rates, consoles, launch date
+    │   └── db.js                    # Supabase server client
+    │
+    ├── public/
+    │   └── images/                  # Hero and gallery artwork
+    │
+    ├── supabase/
+    │   └── schema.sql               # Database schema (tables, constraints, storage bucket)
+    │
+    ├── tests/
+    │   └── booking.test.mjs         # Unit and property-based tests (npm test)
+    │
+    ├── .env.example                 # Environment variable template
+    └── package.json
 ```
 
 *Folder structure may vary depending on the actual implementation.*
