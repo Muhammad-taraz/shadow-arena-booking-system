@@ -73,7 +73,7 @@ Built for **Shadow Tournament Arena** using Next.js, React, Supabase, PostgreSQL
 | Session Type | Price per Console / Hour |
 |---|---:|
 | Standard booking | 700 PKR |
-| Sessions of 3+ hours | 650 PKR |
+| Sessions of 3+ hours | 600 PKR |
 
 - Flexible 50% advance or full payment.
 - Pricing configuration managed centrally in `lib/config.js`.
