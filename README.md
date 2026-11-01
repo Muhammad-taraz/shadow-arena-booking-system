@@ -1,264 +1,128 @@
+# Shadow Tournament Arena
 
-# 🎮 Shadow Tournament Arena
+A responsive booking platform for reserving PS5 gaming sessions at Shadow Tournament Arena. Customers can check availability, submit payment details for manual verification, and track their booking. Arena staff manage bookings in a password-protected dashboard.
 
-### Real-Time Gaming Arena Reservation & Management Platform
+## Features
 
-A full-stack gaming arena booking platform designed for seamless PC and console gaming reservations, real-time slot availability, conflict-free booking, payment verification, and centralized arena management.
+- Book PS5 One, PS5 Two, or both consoles, up to 90 days ahead.
+- Select a session duration and choose from start times that fit arena hours and availability.
+- Refresh availability every 20 seconds.
+- Prevent overlapping reservations with database-backed console-hour locks.
+- Submit a 50% deposit or full payment with a JPG, PNG, or WebP payment screenshot (up to 4 MB).
+- Review, approve, or reject bookings in the owner dashboard. Rejection releases the reserved slots.
+- Track a booking at `/track` using its reference and the phone number used to book.
+- Run the booking and pricing tests with `npm test`.
 
-Built for **Shadow Tournament Arena** using Next.js, React, Supabase, PostgreSQL, and Vercel.
+## Technology
 
----
+- Next.js 15 and React 19
+- Supabase Storage and PostgreSQL
+- JavaScript and CSS
+- Vercel deployment
 
-## 🚀 Features
+## Pricing
 
-### 🎮 Gaming Session Reservations
-- Book gaming sessions up to 90 days in advance.
-- Reserve PS5 One, PS5 Two, or both consoles.
-- Select flexible session start times and durations.
-- Automatically display only available time slots where the entire session fits.
-- Refresh live availability every 20 seconds.
-
-### ⚡ Real-Time Availability & Booking Integrity
-- Console-specific availability tracking.
-- PostgreSQL-backed reservation management.
-- Database-level double-booking prevention.
-- Composite primary key `(date, hour, console)` ensures unique console-hour reservations.
-- Protects against conflicting concurrent reservations.
-
-### 💳 Payment Verification
-- 50% advance or full-payment options.
-- Payment screenshot uploads (JPG, PNG, WebP).
-- Maximum upload size of 4 MB.
-- Sender name collection for payment verification.
-- Manual payment approval workflow.
-
-### 🛠️ Admin Dashboard
-- Centralized booking management.
-- Approve or reject reservation requests.
-- Automatically release slots when bookings are rejected.
-- Filter reservations by date.
-- Access payment screenshots through signed URLs.
-
-### 📱 Booking Status Tracking
-- Dedicated customer booking-status page (`/track`).
-- Track reservations using booking reference and phone number.
-- Check reservation verification status.
-
-### 🧪 Testing & Validation
-- Pricing calculation tests.
-- Arena clock and after-midnight session tests.
-- Availability validation tests.
-- Booking input validation tests.
-- Automated test suite using `npm test`.
-
----
-
-## 🧰 Tech Stack
-
-| Technology | Purpose |
-|---|---|
-| Next.js 15 | Full-stack React framework |
-| React 19 | User interface |
-| Supabase | Backend services |
-| PostgreSQL | Database and booking integrity |
-| Supabase Storage | Private payment screenshot storage |
-| Vercel | Deployment and hosting |
-| JavaScript | Application logic |
-| CSS | Styling and responsive design |
-
----
-
-## 💰 Pricing System
-
-| Session Type | Price per Console / Hour |
+| Session duration | Price per console-hour |
 |---|---:|
-| Standard booking | 700 PKR |
-| Sessions of 3+ hours | 600 PKR |
+| 1–2 hours | PKR 700 |
+| 3 or more hours | PKR 600 |
 
-- Flexible 50% advance or full payment.
-- Pricing configuration managed centrally in `lib/config.js`.
+Rates and arena settings are defined in `sta-gta6/lib/config.js`.
 
----
+## Repository layout
 
-## 🏗️ Booking Architecture
-
-The platform uses database-level constraints to prevent double bookings.
-
-Each reserved console-hour is uniquely identified by:
+The application is inside `sta-gta6/`. Run npm commands from that directory.
 
 ```text
-(date, hour, console)
-```
-
-A PostgreSQL composite primary key ensures that the same console-hour cannot be reserved twice.
-
-This provides database-level protection against conflicting reservations, even when multiple booking requests arrive concurrently.
-
----
-
-## 📂 Project Structure
-
-```
-shadow-arena-booking-system/
-│
-├── .gitignore
+.
 ├── README.md
-│
-└── sta-gta6/                        # GTA VI booking application (Next.js)
-    │
-    ├── app/                         # Next.js App Router
-    │   ├── api/                     # Server-side API routes
-    │   │   ├── admin/route.js       # Admin: list bookings, approve/reject
-    │   │   ├── book/route.js        # Create booking, upload screenshot, lock slots
-    │   │   ├── slots/route.js       # Live availability per date
-    │   │   └── track/route.js       # Customer booking-status lookup
-    │   ├── admin/page.jsx           # Owner dashboard
-    │   ├── track/page.jsx           # Customer booking-status page
-    │   ├── globals.css              # Global styles
-    │   ├── layout.jsx               # Root layout and fonts
-    │   └── page.jsx                 # Public booking page
-    │
-    ├── lib/                         # Business logic and configuration
-    │   ├── booking.js               # Pricing, availability, validation, arena clock
-    │   ├── config.js                # Hours, rates, consoles, launch date
-    │   └── db.js                    # Supabase server client
-    │
-    ├── public/
-    │   └── images/                  # Hero and gallery artwork
-    │
-    ├── supabase/
-    │   └── schema.sql               # Database schema (tables, constraints, storage bucket)
-    │
-    ├── tests/
-    │   └── booking.test.mjs         # Unit and property-based tests (npm test)
-    │
-    ├── .env.example                 # Environment variable template
+└── sta-gta6/
+    ├── app/                 # Pages and API routes
+    ├── lib/                 # Booking logic, configuration, and database client
+    ├── public/images/       # Optional arena and game artwork
+    ├── supabase/schema.sql  # Database and private storage-bucket setup
+    ├── tests/               # Booking tests
+    ├── .env.example
     └── package.json
 ```
 
-## ⚙️ Getting Started
+## Requirements
 
-### Prerequisites
+- Node.js and npm
+- A Supabase project
 
-- Node.js
-- npm
-- Supabase account
-- Git
+## Local setup
 
-### 1. Clone the Repository
+From the repository root:
 
-```bash
-git clone https://github.com/YOUR_USERNAME/shadow-arena-booking-system.git
+1. Install dependencies:
 
-cd shadow-arena-booking-system
-```
+   ```bash
+   cd sta-gta6
+   npm install
+   ```
 
-### 2. Install Dependencies
+2. Create the Supabase tables and private `payments` storage bucket by running `supabase/schema.sql` in the Supabase SQL Editor.
 
-```bash
-npm install
-```
+   **Warning:** The SQL script drops and recreates the `bookings` and `slot_locks` tables. Use it only for a new/test project or after deliberately backing up any data that must be kept.
 
-### 3. Configure Supabase
+3. Create the local environment file:
 
-1. Create a Supabase project.
-2. Open the Supabase SQL Editor.
-3. Execute the SQL script from `supabase/schema.sql`.
+   ```bash
+   cp .env.example .env.local
+   ```
 
-**Important:** The schema script resets booking tables. Run it only on a fresh or test project unless existing data has been backed up.
+   Set each value in `.env.local`:
 
-### 4. Configure Environment Variables
+   | Variable | Purpose |
+   |---|---|
+   | `SUPABASE_URL` | Supabase project URL |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Server-side Supabase service-role key |
+   | `ADMIN_PASSWORD` | Password for the owner dashboard |
+   | `NEXT_PUBLIC_PAY_NUMBER` | Payment account number shown to customers |
+   | `NEXT_PUBLIC_PAY_TITLE` | Payment account title shown to customers |
+   | `NEXT_PUBLIC_WHATSAPP` | Arena WhatsApp number, including country code |
 
-Copy `.env.example` to `.env.local`.
+   Keep `.env.local` private. Never expose or commit `SUPABASE_SERVICE_ROLE_KEY`; it must only be used by server-side code. Use a strong, unique `ADMIN_PASSWORD`.
 
-```bash
-cp .env.example .env.local
-```
+4. Run the tests and start the development server:
 
-Add all required Supabase and application environment variables.
+   ```bash
+   npm test
+   npm run dev
+   ```
 
-Never commit `.env.local` or expose private service-role credentials in client-side code.
+5. Open [http://localhost:3000](http://localhost:3000). The customer booking page is `/`, the owner dashboard is `/admin`, and booking lookup is `/track`.
 
-### 5. Run Tests
+## Artwork
 
-```bash
-npm test
-```
-
-### 6. Start Development Server
-
-```bash
-npm run dev
-```
-
-Open your browser:
+Optional artwork can be added under `sta-gta6/public/images/`:
 
 ```text
-http://localhost:3000
+bg.jpeg
 ```
 
----
+`bg.jpeg` is the only requested artwork and is displayed as the hero image without cropping. If it is unavailable, the hero shows a CSS gradient instead of requesting additional missing image files. Only use artwork you have permission to publish.
 
-## 🖼️ Project Assets
+## Deployment on Vercel
 
-Place the required gaming images inside:
+1. Import the repository into Vercel.
+2. Set the project **Root Directory** to `sta-gta6`.
+3. Add all variables listed above in the Vercel project settings for the appropriate deployment environments.
+4. Deploy. Vercel serves the production build over HTTPS.
 
-```text
-public/
-└── images/
-    ├── bg.jpeg
+Run a local production build from `sta-gta6/` before deployment with:
+
+```bash
+npm run build
 ```
 
-Use artwork and screenshots you have permission to use. The hero scales `bg.jpeg` to fit without cropping and falls back to a CSS gradient if it is unavailable.
+Development and production builds use separate output directories (`.next-dev` and `.next`), so the dev server can remain open while building production.
 
----
+## Booking integrity and operational notes
 
-## 🌐 Deployment
+Each reserved console-hour is stored as a row in `slot_locks`. The database primary key `(date, hour, console)` prevents two bookings from locking the same console-hour, including concurrent booking attempts.
 
-The application is configured for deployment on Vercel.
+Payment verification is manual: a booking remains pending until staff review it in `/admin`. The dashboard uses a single shared `ADMIN_PASSWORD`; the API compares the password using Node.js `timingSafeEqual`. Use HTTPS in production, keep the password private, and consider Supabase Auth before giving dashboard access to multiple staff members.
 
-1. Push the project to GitHub.
-2. Import the repository into Vercel.
-3. Configure the required environment variables.
-4. Deploy the application.
-5. Set the Vercel project name to `shadow-tournament-arena`.
-
----
-
-## ⚠️ Current Limitations
-
-- Admin authentication currently uses a single shared password with constant-time comparison and HTTPS.
-- Supabase Auth is recommended when adding multiple staff members.
-- Application-level rate limiting is not currently implemented.
-- Vercel Firewall rules can help mitigate booking spam.
-- Payment verification is currently handled manually through the admin dashboard.
-
----
-
-## 🔮 Future Enhancements
-
-- Multiple gaming platforms and console types.
-- PC gaming station reservations.
-- Automated payment gateway integration.
-- Advanced revenue analytics and reporting.
-- Multiple staff accounts with role-based access.
-- Automated booking confirmations and notifications.
-- Tournament registration and management.
-- Enhanced reservation management.
-
----
-
-## 👨‍💻 About the Project
-
-**Shadow Tournament Arena** is a gaming arena reservation and management platform designed to simplify gaming session bookings, prevent scheduling conflicts, streamline payment verification, and improve daily arena operations.
-
-**Project:** Shadow Tournament Arena  
-**Repository:** `shadow-arena-booking-system`  
-**Architecture:** Full-Stack Web Application  
-**Stack:** Next.js · React · Supabase · PostgreSQL · Vercel
-
----
-
-⭐ If you find this project interesting, consider giving the repository a star!
-
-*Built for modern gaming arena operations.*
+Application-level rate limiting is not configured. Consider adding platform-level protections if the public booking endpoint receives abusive traffic.
